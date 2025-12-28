@@ -18,6 +18,8 @@ export default function Sidebar() {
         { href: '/personas', label: 'Personas', icon: Users },
         { href: '/jobs', label: 'Job History', icon: BarChart3 },
         { href: '/campaigns', label: 'Campaigns', icon: Mail },
+        { href: '/templates', label: 'Templates', icon: Mail },
+        { href: '/email-accounts', label: 'Email Accounts', icon: Mail },
         { href: '/analytics', label: 'Analytics', icon: BarChart3 },
         { href: '/settings', label: 'Settings', icon: Settings },
     ];
