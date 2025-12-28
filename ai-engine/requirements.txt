@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+pydantic
+openai
+python-dotenv
+praw
+tweepy
+selenium
+playwright
+beautifulsoup4
+requests
+chromadb
+langchain
+langchain-openai
+tiktoken

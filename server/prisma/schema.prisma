@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== AUTHENTICATION & MULTI-TENANCY ====================
+
+model Tenant {
+  id             Int              @id @default(autoincrement())
+  name           String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  users          User[]
+  searchJobs     SearchJob[]
+  campaigns      Campaign[]
+  templates      Template[]
+  knowledgeItems KnowledgeItem[]
+  emailAccounts  EmailAccount[]
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  passwordHash  String
+  name          String?
+  tenantId      Int
+  role          String         @default("USER") // USER, ADMIN
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  campaigns     Campaign[]
+  emailAccounts EmailAccount[]
+}
+
+// ==================== LEAD DISCOVERY ====================
+
+model SearchJob {
+  id        Int       @id @default(autoincrement())
+  term      String
+  status    String    @default("PENDING") // PENDING, RUNNING, COMPLETED, FAILED
+  source    String    @default("GOOGLE_MAPS") // GOOGLE_MAPS, LINKEDIN, REDDIT, TWITTER
+  tenantId  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leads     Lead[]
+  personas  Persona[]
+}
+
+model Lead {
+  id           Int        @id @default(autoincrement())
+  name         String
+  company      String?
+  address      String?
+  phone        String?
+  website      String?
+  description  String?
+  rating       Float?
+  reviewsCount Int?
+  gmapsUrl     String?
+  email        String?
+  instagram    String?
+  linkedin     String?
+  twitter      String?
+  jobId        Int
+  tenantId     Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  job          SearchJob  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  personas     Persona[]
+  emailLogs    EmailLog[]
+
+  @@index([tenantId])
+  @@index([email])
+}
+
+model Persona {
+  id            Int       @id @default(autoincrement())
+  name          String
+  role          String?
+  company       String?
+  linkedinUrl   String?
+  twitterHandle String?
+  redditUser    String?
+  email         String?
+  location      String?
+  source        String    @default("GOOGLE_SERP") // LINKEDIN, REDDIT, TWITTER, GOOGLE_SERP
+  jobId         Int
+  leadId        Int?
+  tenantId      Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  job           SearchJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  lead          Lead?     @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([email])
+}
+
+// ==================== CAMPAIGN MANAGEMENT ====================
+
+model Campaign {
+  id           Int        @id @default(autoincrement())
+  name         String
+  status       String     @default("DRAFT") // DRAFT, ACTIVE, PAUSED, COMPLETED
+  emailsSent   Int        @default(0)
+  repliesCount Int        @default(0)
+  userId       Int
+  tenantId     Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  emailLogs    EmailLog[]
+
+  @@index([tenantId])
+  @@index([status])
+}
+
+model EmailLog {
+  id         Int      @id @default(autoincrement())
+  campaignId Int
+  leadId     Int
+  subject    String
+  body       String
+  sentAt     DateTime @default(now())
+  opened     Boolean  @default(false)
+  replied    Boolean  @default(false)
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  lead       Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  replies    Reply[]
+
+  @@index([campaignId])
+  @@index([leadId])
+}
+
+model Reply {
+  id         Int      @id @default(autoincrement())
+  emailLogId Int
+  content    String
+  sentiment  String   @default("NEUTRAL") // POSITIVE, NEGATIVE, NEUTRAL
+  intent     String   @default("UNKNOWN") // INTERESTED, NOT_INTERESTED, QUESTION, UNKNOWN
+  receivedAt DateTime @default(now())
+  emailLog   EmailLog @relation(fields: [emailLogId], references: [id], onDelete: Cascade)
+
+  @@index([emailLogId])
+}
+
+model Template {
+  id        Int      @id @default(autoincrement())
+  name      String
+  subject   String
+  body      String   // Can contain variables like {{name}}
+  tenantId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
+
+// ==================== KNOWLEDGE BASE (RAG) ====================
+
+model KnowledgeItem {
+  id        Int      @id @default(autoincrement())
+  type      String   // CASE_STUDY, OFFER, TONE_EXAMPLE
+  title     String
+  content   String
+  vectorId  String?  // ChromaDB vector ID
+  tenantId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([type])
+}
+
+// ==================== EMAIL INFRASTRUCTURE ====================
+
+model EmailAccount {
+  id         Int      @id @default(autoincrement())
+  email      String
+  smtpHost   String
+  smtpPort   Int
+  smtpUser   String
+  smtpPass   String
+  imapHost   String?
+  imapPort   Int?
+  isActive   Boolean  @default(false)
+  userId     Int?
+  tenantId   Int      @default(1)
+  dailyLimit Int      @default(50)
+  sentToday  Int      @default(0)
+  lastReset  DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tenantId])
+}
+
+// ==================== SYSTEM LOGS ====================
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  level     String   // INFO, WARNING, ERROR
+  message   String
+  tenantId  Int?
+  userId    Int?
+  timestamp DateTime @default(now())
+
+  @@index([level])
+  @@index([timestamp])
+}
