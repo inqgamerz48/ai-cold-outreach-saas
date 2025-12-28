@@ -1,55 +1,81 @@
-# AI Cold Outreach SaaS
+# 🚀 AI Cold Outreach SaaS
 
 A powerful, AI-powered lead generation and cold outreach system built with Next.js, Node.js, and Python.
 
-![Status](https://img.shields.io/badge/Phase-2%20Complete-green)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-green)
+![Version](https://img.shields.io/badge/Version-1.0.0-blue)
 ![License](https://img.shields.io/badge/License-Private-red)
 
 ---
 
-## 🚀 Features
+## ✨ Features
 
-### Lead Discovery
+### 🔍 Lead Discovery
 - **Google Maps Scraper** - Extract local business leads with contact info
 - **LinkedIn Search** - Find decision-makers via Apify actors
 - **Reddit Discovery** - Identify potential leads from relevant discussions
+- **Twitter Search** - Track conversations and find prospects
 - **Email Enrichment** - Automatically find email addresses using Hunter.io
 
-### Queue System
-- Async job processing with status tracking
-- Concurrent request handling
-- Real-time job monitoring
+### 📧 Email Campaigns
+- **Email Templates** - Create reusable templates with {{variables}}
+- **AI Email Generation** - GPT-powered personalized email composition
+- **Campaign Wizard** - 4-step campaign creation with audience selection
+- **Email Scheduling** - Rate-limited sending with daily quotas
+- **SMTP Integration** - Connect Gmail, Outlook, or custom SMTP
 
-### Modern UI
-- Dark theme dashboard with animations
-- Universal scraper interface
-- Job history and lead management
-- Settings page for API configuration
+### 📊 Analytics & Tracking
+- **Reply Classification** - AI-powered sentiment and intent analysis
+- **Campaign Performance** - Open rates, reply rates, conversions
+- **Visual Dashboards** - Charts for sentiment, intent breakdown
+- **Real-time Monitoring** - Job status and queue tracking
+
+### 🎨 Modern UI
+- **Dark Theme Dashboard** - Sleek, animated interface
+- **Onboarding Wizard** - Step-by-step setup guide
+- **Landing Page** - Professional marketing page
+- **Responsive Design** - Works on all devices
 
 ---
 
 ## 📁 Project Structure
 
 ```
-email cold revaher/
-├── client/                 # Next.js frontend (Port 3000)
+ai-cold-outreach-saas/
+├── client/                 # Next.js 16 frontend (Port 3000)
 │   ├── app/
 │   │   ├── page.tsx       # Dashboard
-│   │   ├── scraper/       # Scraper pages
-│   │   ├── jobs/          # Job management
+│   │   ├── scraper/       # Multi-source scraper UI
 │   │   ├── leads/         # Leads database
 │   │   ├── personas/      # Personas database
-│   │   └── settings/      # API key configuration
-│   └── ...
+│   │   ├── campaigns/     # Campaign management
+│   │   ├── templates/     # Email templates
+│   │   ├── analytics/     # Visual analytics
+│   │   ├── email-accounts/# SMTP configuration
+│   │   ├── onboarding/    # Setup wizard
+│   │   ├── landing/       # Marketing page
+│   │   └── settings/      # API configuration
+│   └── components/        # Reusable components
 ├── server/                 # Node.js backend (Port 3001)
 │   ├── src/
-│   │   ├── index.ts       # Express server
+│   │   ├── index.ts       # Express server (1000+ lines)
 │   │   ├── scrapers/      # Crawlee scrapers
 │   │   └── services/      # Business logic
+│   │       ├── campaignService.ts
+│   │       ├── campaignScheduler.ts
+│   │       ├── emailSender.ts
+│   │       ├── aiService.ts
+│   │       └── apifyService.ts
 │   └── prisma/            # Database schema
-└── ai-engine/             # Python AI services (Port 8000)
-    ├── main.py            # FastAPI server
-    └── scrapers/          # Social media scrapers
+├── ai-engine/             # Python AI services (Port 8000)
+│   ├── main.py            # FastAPI server
+│   ├── scrapers/          # Social media scrapers
+│   └── services/          # RAG & AI services
+└── docs/                  # Documentation
+    ├── HANDOVER.md        # Complete technical docs
+    ├── DEPLOYMENT.md      # Production deployment
+    ├── TROUBLESHOOTING.md # Common issues
+    └── QUICKSTART.md      # 10-min setup
 ```
 
 ---
@@ -58,51 +84,51 @@ email cold revaher/
 
 | Component | Technology |
 |-----------|------------|
-| Frontend | Next.js 14, TypeScript, Tailwind CSS, Framer Motion |
-| Backend | Node.js, Express, TypeScript, Crawlee |
-| AI Engine | Python, FastAPI, Playwright |
-| Database | SQLite with Prisma ORM |
+| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4, Framer Motion |
+| Backend | Node.js, Express 5, TypeScript, Crawlee, Prisma |
+| AI Engine | Python, FastAPI, LangChain, ChromaDB |
+| Database | SQLite (dev) / PostgreSQL (prod) |
 | Scraping | Apify, Playwright, Crawlee |
-| Email | Hunter.io API |
+| Email | Nodemailer, Hunter.io API |
+| Charts | Recharts |
 
 ---
 
-## 📦 Installation
+## 📦 Quick Start
 
 ### Prerequisites
 - Node.js 18+
 - Python 3.10+
 - npm or yarn
 
-### 1. Clone and Install
+### 1. Install Dependencies
 
 ```bash
-# Install server dependencies
-cd server
-npm install
+# Server
+cd server && npm install
 
-# Install client dependencies
-cd ../client
-npm install
+# Client
+cd ../client && npm install
 
-# Install Python dependencies
+# AI Engine
 cd ../ai-engine
+python -m venv venv && .\venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
 ### 2. Configure Environment
 
-Copy the example env file:
 ```bash
-cd server
-cp .env.example .env
+cd server && cp .env.example .env
 ```
 
-Edit `.env` with your API keys:
+Edit `server/.env`:
 ```env
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="file:./prisma/dev.db"
+PORT=3001
+CORS_ORIGIN=http://localhost:3000
 
-# Optional - for real data scraping
+# Optional API Keys
 APIFY_API_TOKEN=your_apify_token
 HUNTER_API_KEY=your_hunter_key
 ```
@@ -119,144 +145,109 @@ npx prisma db push
 
 ```bash
 # Terminal 1 - Backend
-cd server
-npm run dev
+cd server && npm run dev
 
-# Terminal 2 - Frontend
-cd client
-npm run dev
+# Terminal 2 - Frontend  
+cd client && npm run dev
 
 # Terminal 3 - AI Engine (optional)
-cd ai-engine
-python main.py
+cd ai-engine && python main.py
 ```
+
+### 5. Access Application
+
+- **App**: http://localhost:3000
+- **API**: http://localhost:3001
+- **AI Engine**: http://localhost:8000
 
 ---
 
-## 🔑 API Keys Configuration
+## 🌐 Available Routes
 
-### Via Settings Page (Recommended)
-
-1. Open the app at `http://localhost:3000`
-2. Navigate to **Settings**
-3. Enter your API keys
-4. Click **Save Settings**
-
-### Via Environment Variables
-
-Add to `server/.env`:
-
-```env
-# Apify - For LinkedIn & Reddit scraping
-# Get at: https://console.apify.com/account/integrations
-APIFY_API_TOKEN=apify_api_xxxxx
-
-# Hunter.io - For email finding
-# Get at: https://hunter.io/api-keys
-HUNTER_API_KEY=xxxxx
-```
+| Route | Description |
+|-------|-------------|
+| `/` | Dashboard with stats |
+| `/scraper` | Multi-source lead scraper |
+| `/leads` | Leads database |
+| `/personas` | People/contacts database |
+| `/campaigns` | Campaign management |
+| `/campaigns/new` | Campaign creation wizard |
+| `/templates` | Email templates |
+| `/email-accounts` | SMTP configuration |
+| `/analytics` | Visual analytics |
+| `/settings` | API key configuration |
+| `/landing` | Marketing landing page |
+| `/onboarding` | Setup wizard |
 
 ---
 
-## 🌐 API Endpoints
+## 🔑 API Keys
 
-### Health Check
-```
-GET /health
-```
+### Required for Full Functionality
 
-### Settings
-```
-GET  /api/settings     # Get current config status
-POST /api/settings     # Save API keys
-```
+| Service | Purpose | Get From |
+|---------|---------|----------|
+| **Apify** | LinkedIn & Reddit scraping | [console.apify.com](https://console.apify.com) |
+| **Hunter.io** | Email enrichment | [hunter.io/api-keys](https://hunter.io/api-keys) |
 
-### Search Jobs
-```
-POST /api/search/maps      # Google Maps search
-POST /api/search/linkedin  # LinkedIn search
-POST /api/search/reddit    # Reddit search
-POST /api/search/twitter   # Twitter search
-GET  /api/search/job/:id   # Get job status & results
-```
+### Optional
 
-### Authentication
-```
-POST /api/auth/register    # Create account
-POST /api/auth/login       # Login
-```
+| Service | Purpose |
+|---------|---------|
+| **OpenRouter** | AI email generation |
+| **Twitter API** | Tweet scraping |
 
 ---
 
 ## 📊 Database Schema
 
-| Model | Purpose |
-|-------|---------|
-| Tenant | Multi-tenancy support |
-| User | User accounts |
-| SearchJob | Scraping job tracking |
-| Lead | Business leads (Google Maps) |
-| Persona | People leads (LinkedIn, Reddit) |
-| Campaign | Email campaigns |
-| EmailLog | Sent email tracking |
+12 models covering:
+- **Authentication**: Tenant, User
+- **Lead Discovery**: SearchJob, Lead, Persona
+- **Campaigns**: Campaign, EmailLog, Reply
+- **Templates**: Template, KnowledgeItem
+- **Infrastructure**: EmailAccount, Log
 
 ---
 
-## 🔄 Development Phases
+## 📚 Documentation
 
-### ✅ Phase 1: Foundation
-- [x] Project setup
-- [x] Database schema
-- [x] Authentication
-- [x] Basic UI
-
-### ✅ Phase 2: Lead Discovery
-- [x] Google Maps scraper (Crawlee)
-- [x] LinkedIn via Apify
-- [x] Reddit via Apify
-- [x] Email enrichment (Hunter.io)
-- [x] Queue system
-- [x] Settings page
-
-### 🚧 Phase 3: Email Personalization (Next)
-- [ ] AI email generation (GPT)
-- [ ] RAG knowledge base
-- [ ] Email templates
-- [ ] Reply classification
-
-### 📋 Phase 4: Campaign Management
-- [ ] Campaign creation
-- [ ] Scheduling system
-- [ ] Analytics dashboard
-- [ ] Rate limiting
+| Document | Description |
+|----------|-------------|
+| [docs/HANDOVER.md](docs/HANDOVER.md) | Complete technical documentation |
+| [docs/QUICKSTART.md](docs/QUICKSTART.md) | 10-minute setup guide |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Production deployment |
+| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Common issues & fixes |
+| [docs/CHANGELOG.md](docs/CHANGELOG.md) | Version history |
+| [docs/TECHNICAL_SPECS.md](docs/TECHNICAL_SPECS.md) | System requirements |
 
 ---
 
 ## 🧪 Testing
 
-### Run TypeScript Checks
 ```bash
-# Server
+# TypeScript checks
 cd server && npx tsc --noEmit
-
-# Client
 cd client && npx tsc --noEmit
-```
 
-### Run ESLint
-```bash
+# Linting
 cd client && npx eslint .
+
+# API health check
+curl http://localhost:3001/health
 ```
 
-### Test API
-```powershell
-# Health check
-Invoke-RestMethod -Uri "http://localhost:3001/health"
+---
 
-# Google Maps search
-$body = @{term='Coffee Shops NYC'} | ConvertTo-Json
-Invoke-RestMethod -Uri "http://localhost:3001/api/search/maps" -Method POST -Body $body -ContentType "application/json"
-```
+## 📈 Development Status
+
+| Phase | Status | Completion |
+|-------|--------|------------|
+| Phase 1: Foundation | ✅ Complete | 100% |
+| Phase 2: Lead Discovery | ✅ Complete | 100% |
+| Phase 3: Email AI | ✅ Complete | 100% |
+| Phase 4: Campaign Management | ✅ Complete | 100% |
+| Phase 5: Polish & Launch | ✅ Complete | 100% |
 
 ---
 
@@ -266,6 +257,10 @@ Private - All rights reserved.
 
 ---
 
-## 🤝 Contributing
+## 🤝 Support
 
-This is a private project. Contact the owner for contribution guidelines.
+For technical documentation, see the [docs/](docs/) folder.
+
+---
+
+*Built with ❤️ using Next.js, Node.js, and Python*

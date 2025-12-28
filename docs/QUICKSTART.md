@@ -87,6 +87,11 @@ npx prisma db push
 
 ## 6️⃣ First Steps
 
+### New User? Start with Onboarding
+1. Go to http://localhost:3000/onboarding
+2. Follow the 5-step setup wizard
+3. Configure API keys and create your first lead search
+
 ### Create Account
 1. Go to http://localhost:3000
 2. Click "Sign Up"
@@ -105,6 +110,12 @@ npx prisma db push
 3. Enter search term: `Coffee shops in Brooklyn`
 4. Click "Start Search"
 5. Wait for results in Jobs queue
+
+### Create Email Campaign
+1. Go to Templates → Create a template
+2. Go to Email Accounts → Add your SMTP
+3. Go to Campaigns → New Campaign
+4. Follow the 4-step wizard
 
 ---
 
