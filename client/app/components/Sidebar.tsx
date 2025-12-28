@@ -20,6 +20,7 @@ export default function Sidebar() {
         { href: '/campaigns', label: 'Campaigns', icon: Mail },
         { href: '/templates', label: 'Templates', icon: Mail },
         { href: '/email-accounts', label: 'Email Accounts', icon: Mail },
+        { href: '/ab-testing', label: 'A/B Testing', icon: BarChart3 },
         { href: '/analytics', label: 'Analytics', icon: BarChart3 },
         { href: '/settings', label: 'Settings', icon: Settings },
     ];
