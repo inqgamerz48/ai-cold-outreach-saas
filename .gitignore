@@ -63,7 +63,7 @@ test-results/
 storage/
 
 # Debug files
-*.html
+# *.html - removed to allow docs/webpages
 *.png
 !public/*.png
 
