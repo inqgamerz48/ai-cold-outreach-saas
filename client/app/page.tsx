@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Database, Loader2, TrendingUp, Users, MapPin, Zap, Activity,
-  ArrowUpRight, RefreshCw, Sparkles, Clock, CheckCircle
+  ArrowUpRight, RefreshCw, Terminal, Cpu, Radio, ShieldCheck
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -47,7 +47,6 @@ export default function DashboardPage() {
       if (healthRes.ok) {
         setBackendStatus('online');
 
-        // Try to fetch real stats from jobs endpoint
         try {
           const jobsRes = await fetch('http://localhost:3001/api/jobs');
           if (jobsRes.ok) {
@@ -63,7 +62,6 @@ export default function DashboardPage() {
                 activeJobs: active
               }));
 
-              // Show last 5 jobs
               setRecentJobs(jobs.slice(0, 5).map((job: { id: number; searchTerm: string; source: string; status: string; resultCount: number; createdAt?: string }) => ({
                 id: job.id,
                 term: job.searchTerm,
@@ -78,7 +76,6 @@ export default function DashboardPage() {
           console.log('Jobs API not available');
         }
 
-        // Try to fetch leads count
         try {
           const leadsRes = await fetch('http://localhost:3001/api/leads');
           if (leadsRes.ok) {
@@ -92,7 +89,6 @@ export default function DashboardPage() {
           console.log('Leads API not available');
         }
 
-        // Try to fetch personas count
         try {
           const personasRes = await fetch('http://localhost:3001/api/personas');
           if (personasRes.ok) {
@@ -108,7 +104,7 @@ export default function DashboardPage() {
       }
     } catch {
       setBackendStatus('offline');
-      // Use demo data when backend is offline
+      // Demo Data
       setStats({
         totalLeads: 1247,
         totalPersonas: 423,
@@ -128,7 +124,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchData();
-    // Poll every 30 seconds
     const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, [fetchData]);
@@ -139,176 +134,115 @@ export default function DashboardPage() {
   };
 
   const statCards = [
-    {
-      label: 'Total Leads',
-      value: stats.totalLeads,
-      icon: Database,
-      color: 'from-blue-500 to-cyan-500',
-      bgGlow: 'glow-cyan',
-      trend: '+12%',
-      trendUp: true
-    },
-    {
-      label: 'Personas',
-      value: stats.totalPersonas,
-      icon: Users,
-      color: 'from-purple-500 to-pink-500',
-      bgGlow: 'glow',
-      trend: '+8%',
-      trendUp: true
-    },
-    {
-      label: 'Active Jobs',
-      value: stats.activeJobs,
-      icon: Activity,
-      color: 'from-amber-500 to-orange-500',
-      bgGlow: 'glow-amber',
-      trend: 'Live',
-      trendUp: null
-    },
-    {
-      label: 'Completed',
-      value: stats.completedJobs,
-      icon: TrendingUp,
-      color: 'from-emerald-500 to-green-500',
-      bgGlow: 'glow-emerald',
-      trend: '+23%',
-      trendUp: true
-    },
+    { label: 'TOTAL LEADS', value: stats.totalLeads, icon: Database, trend: '+12%', sub: 'INDEXED' },
+    { label: 'PERSONAS', value: stats.totalPersonas, icon: Users, trend: '+8%', sub: 'ACTIVE' },
+    { label: 'RUNNING JOBS', value: stats.activeJobs, icon: Activity, trend: 'LIVE', sub: 'PROCESSES' },
+    { label: 'COMPLETED', value: stats.completedJobs, icon: ShieldCheck, trend: '99.9%', sub: 'SUCCESS RATE' },
   ];
 
   const quickActions = [
-    { href: '/scraper/google-maps', label: 'Google Maps Search', icon: MapPin, color: 'from-blue-600 to-blue-500', description: 'Find local businesses' },
-    { href: '/scraper/linkedin', label: 'LinkedIn Scrape', icon: Users, color: 'from-indigo-600 to-indigo-500', description: 'Find decision makers' },
-    { href: '/scraper/reddit', label: 'Reddit Discovery', icon: Zap, color: 'from-orange-600 to-orange-500', description: 'Find potential leads' },
+    { href: '/scraper/google-maps', label: 'MAPS_EXTRACTOR', icon: MapPin, desc: 'Target local entities' },
+    { href: '/scraper/linkedin', label: 'LINKEDIN_MINER', icon: Users, desc: 'Professional network scan' },
+    { href: '/scraper/reddit', label: 'REDDIT_OSINT', icon: Zap, desc: 'Social sentiment analysis' },
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'COMPLETED': return 'badge-success';
-      case 'FAILED': return 'badge-error';
-      case 'RUNNING': return 'badge-warning';
-      default: return 'bg-slate-800 text-slate-400';
-    }
-  };
-
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Animated Background Orbs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="orb orb-1" />
-        <div className="orb orb-2" />
-        <div className="orb orb-3" />
+    <div className="min-h-screen relative p-8 md:p-12 font-body selection:bg-acid selection:text-black">
+      <div className="grid-bg" />
+
+      {/* HEADER SECTION */}
+      <header className="relative z-10 mb-16 border-b border-[#333] pb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-3 mb-2"
+            >
+              <div className="w-2 h-2 bg-acid animate-pulse"></div>
+              <span className="text-xs font-mono text-acid tracking-[0.2em] uppercase">System Ready // v2.4.0</span>
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-5xl md:text-7xl font-heading text-primary uppercase tracking-tighter"
+            >
+              NEXUS<span className="text-acid">.CMD</span>
+            </motion.h1>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <div className="hidden md:block text-right">
+              <div className="text-xs text-[#666] uppercase tracking-widest mb-1">Backend Uplink</div>
+              <div className={`text-sm font-mono flex items-center justify-end gap-2 ${backendStatus === 'online' ? 'text-emerald-500' : 'text-red-500'
+                }`}>
+                {backendStatus === 'online' ? 'CONNECTED' : 'OFFLINE'}
+                <div className={`w-1.5 h-1.5 rounded-full ${backendStatus === 'online' ? 'bg-emerald-500' : 'bg-red-500'}`} />
+              </div>
+            </div>
+
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="btn-mech group"
+            >
+              <span className="flex items-center gap-2">
+                <RefreshCw size={16} className={`group-hover:rotate-180 transition-transform duration-500 ${refreshing ? 'animate-spin' : ''}`} />
+                SYNC_DATA
+              </span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* STATS GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 relative z-10">
+        {statCards.map((stat, i) => (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="panel p-6 group hover:translate-y-[-2px] transition-transform duration-300"
+          >
+            <div className="flex justify-between items-start mb-4">
+              <stat.icon size={20} className="text-[#444] group-hover:text-acid transition-colors duration-300" />
+              <span className="text-[10px] font-mono border border-[#333] px-2 py-0.5 text-[#666] group-hover:border-acid group-hover:text-acid transition-colors">
+                {stat.trend}
+              </span>
+            </div>
+            <div className="text-4xl font-heading text-white mb-1">
+              {loading ? (
+                <span className="animate-pulse bg-[#222] h-10 w-24 block rounded-none" />
+              ) : (
+                stat.value.toLocaleString()
+              )}
+            </div>
+            <div className="text-xs uppercase tracking-widest text-[#666] group-hover:text-[#999]">
+              {stat.label}
+            </div>
+            <div className="absolute bottom-0 right-0 w-8 h-8 border-r border-b border-[#333] group-hover:border-acid transition-colors duration-300" />
+          </motion.div>
+        ))}
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 p-8">
-        {/* Header */}
-        <header className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <motion.h1
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-4xl font-bold gradient-text mb-2 flex items-center gap-3"
-              >
-                <Sparkles className="text-indigo-400" size={32} />
-                Mission Control
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.1 }}
-                className="text-slate-400"
-              >
-                Overview of your lead generation operations.
-              </motion.p>
-            </div>
-            <div className="flex items-center gap-4">
-              {/* Backend Status */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className={`px-4 py-2 rounded-full glass flex items-center gap-2 text-sm ${backendStatus === 'online' ? 'text-emerald-400' :
-                    backendStatus === 'offline' ? 'text-red-400' : 'text-amber-400'
-                  }`}
-              >
-                <span className={`w-2 h-2 rounded-full ${backendStatus === 'online' ? 'bg-emerald-400 animate-pulse' :
-                    backendStatus === 'offline' ? 'bg-red-400' : 'bg-amber-400 animate-pulse'
-                  }`} />
-                Backend: {backendStatus}
-              </motion.div>
-              {/* Refresh Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="p-3 glass rounded-xl hover:bg-slate-800/50 transition-all"
-              >
-                <RefreshCw className={`text-slate-400 ${refreshing ? 'animate-spin' : ''}`} size={20} />
-              </motion.button>
-            </div>
-          </div>
-        </header>
+      {/* MAIN CONTENT GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {statCards.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: i * 0.1, type: 'spring', stiffness: 100 }}
-              whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className={`card-modern shimmer p-6 ${stat.bgGlow}`}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <motion.div
-                  className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}
-                  whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.5 } }}
-                >
-                  <stat.icon className="text-white" size={26} />
-                </motion.div>
-                {stat.trend && (
-                  <span className={`text-xs px-2 py-1 rounded-full ${stat.trendUp === true ? 'bg-emerald-900/50 text-emerald-400' :
-                      stat.trendUp === false ? 'bg-red-900/50 text-red-400' :
-                        'bg-amber-900/50 text-amber-400 animate-pulse'
-                    }`}>
-                    {stat.trend}
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>
-              <p className="text-4xl font-bold text-white">
-                {loading ? (
-                  <span className="skeleton h-10 w-20 inline-block" />
-                ) : (
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    key={stat.value}
-                  >
-                    {stat.value.toLocaleString()}
-                  </motion.span>
-                )}
-              </p>
-            </motion.div>
-          ))}
-        </div>
+        {/* QUICK ACTIONS */}
+        <div className="lg:col-span-1">
+          <motion.h2
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-lg font-heading text-[#888] mb-6 flex items-center gap-2"
+          >
+            <Terminal size={18} />
+            EXECUTION PROFILES
+          </motion.h2>
 
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mb-8"
-        >
-          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Zap className="text-amber-400" size={20} />
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-4">
             {quickActions.map((action, i) => (
               <motion.div
                 key={action.href}
@@ -316,109 +250,120 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + i * 0.1 }}
               >
-                <Link
-                  href={action.href}
-                  className="group flex items-center gap-4 p-5 card-modern glow-hover"
-                >
-                  <motion.div
-                    className={`w-14 h-14 bg-gradient-to-br ${action.color} rounded-2xl flex items-center justify-center shadow-lg`}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ type: 'spring', stiffness: 300 }}
-                  >
-                    <action.icon className="text-white" size={24} />
-                  </motion.div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-white group-hover:text-indigo-300 transition-colors">{action.label}</p>
-                    <p className="text-xs text-slate-500">{action.description}</p>
+                <Link href={action.href} className="block group">
+                  <div className="panel p-5 flex items-center gap-4 transition-all duration-300 group-hover:bg-[#111]">
+                    <div className="w-10 h-10 bg-[#111] border border-[#333] flex items-center justify-center group-hover:border-acid group-hover:text-acid transition-colors">
+                      <action.icon size={20} />
+                    </div>
+                    <div>
+                      <div className="font-mono text-sm text-primary group-hover:text-acid transition-colors">
+                        {'>'} {action.label}
+                      </div>
+                      <div className="text-xs text-[#555] mt-1">{action.desc}</div>
+                    </div>
+                    <ArrowUpRight className="ml-auto text-[#333] group-hover:text-acid transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" size={18} />
                   </div>
-                  <ArrowUpRight className="text-slate-600 group-hover:text-indigo-400 transition-colors" size={20} />
                 </Link>
               </motion.div>
             ))}
-          </div>
-        </motion.div>
 
-        {/* Recent Jobs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="card-modern p-6"
-        >
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8 }}
+            >
+              <div className="p-5 border border-dashed border-[#333] text-center">
+                <div className="text-xs text-[#555] uppercase tracking-widest mb-2">System Resources</div>
+                <div className="flex justify-center gap-4 text-[#444]">
+                  <Cpu size={16} />
+                  <Radio size={16} />
+                  <Database size={16} />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* RECENT LOGS */}
+        <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Clock className="text-indigo-400" size={20} />
-              Recent Jobs
-            </h2>
-            <Link href="/jobs" className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1">
-              View All <ArrowUpRight size={14} />
+            <motion.h2
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-lg font-heading text-[#888] flex items-center gap-2"
+            >
+              <Activity size={18} />
+              LATEST OPERATIONS
+            </motion.h2>
+            <Link href="/jobs" className="text-xs font-mono text-acid hover:underline">
+              VIEW_ALL_LOGS
             </Link>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="text-xs text-slate-500 uppercase border-b border-slate-800">
-                <tr>
-                  <th className="pb-4 pr-4">ID</th>
-                  <th className="pb-4 pr-4">Search Term</th>
-                  <th className="pb-4 pr-4">Source</th>
-                  <th className="pb-4 pr-4">Status</th>
-                  <th className="pb-4">Results</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/50">
-                <AnimatePresence mode="popLayout">
-                  {loading ? (
-                    [1, 2, 3].map((n) => (
-                      <motion.tr key={n} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                        <td className="py-4 pr-4"><span className="skeleton h-4 w-8 inline-block" /></td>
-                        <td className="py-4 pr-4"><span className="skeleton h-4 w-32 inline-block" /></td>
-                        <td className="py-4 pr-4"><span className="skeleton h-4 w-20 inline-block" /></td>
-                        <td className="py-4 pr-4"><span className="skeleton h-4 w-16 inline-block" /></td>
-                        <td className="py-4"><span className="skeleton h-4 w-8 inline-block" /></td>
-                      </motion.tr>
-                    ))
-                  ) : recentJobs.length === 0 ? (
-                    <motion.tr
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                    >
-                      <td colSpan={5} className="py-12 text-center text-slate-500">
-                        No jobs yet. Start a scrape to see results here!
-                      </td>
-                    </motion.tr>
-                  ) : (
-                    recentJobs.map((job, i) => (
-                      <motion.tr
-                        key={job.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="table-row-hover"
-                      >
-                        <td className="py-4 pr-4 text-slate-400">#{job.id}</td>
-                        <td className="py-4 pr-4 font-medium text-white">{job.term}</td>
-                        <td className="py-4 pr-4">
-                          <span className="px-3 py-1 text-xs rounded-full glass">
-                            {job.source}
-                          </span>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="panel overflow-hidden"
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-[#222]">
+                    <th className="pl-6">ID</th>
+                    <th>TARGET_QUERY</th>
+                    <th>PROTOCOL</th>
+                    <th>STATUS</th>
+                    <th className="pr-6">YIELD</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#151515]">
+                  <AnimatePresence>
+                    {loading ? (
+                      [1, 2, 3].map(n => (
+                        <tr key={n}>
+                          <td colSpan={5} className="py-4 px-6"><div className="h-4 bg-[#111] animate-pulse w-full" /></td>
+                        </tr>
+                      ))
+                    ) : recentJobs.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-12 text-center text-[#444] font-mono text-sm">
+                          // NO ACTIVE OPERATIONS DETECTED
                         </td>
-                        <td className="py-4 pr-4">
-                          <span className={`px-3 py-1 text-xs rounded-full flex items-center gap-1.5 w-fit ${getStatusColor(job.status)}`}>
-                            {job.status === 'COMPLETED' && <CheckCircle size={12} />}
-                            {job.status === 'RUNNING' && <Loader2 size={12} className="animate-spin" />}
-                            {job.status}
-                          </span>
-                        </td>
-                        <td className="py-4 text-slate-400">{job.count}</td>
-                      </motion.tr>
-                    ))
-                  )}
-                </AnimatePresence>
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
+                      </tr>
+                    ) : (
+                      recentJobs.map((job) => (
+                        <tr key={job.id} className="group">
+                          <td className="pl-6 font-mono text-xs text-[#555] py-4 group-hover:text-white">#{job.id}</td>
+                          <td className="font-medium text-white group-hover:text-acid transition-colors">{job.term}</td>
+                          <td>
+                            <span className="text-[10px] uppercase tracking-wider px-2 py-1 bg-[#111] border border-[#222] text-[#888]">
+                              {job.source}
+                            </span>
+                          </td>
+                          <td>
+                            <div className="flex items-center gap-2">
+                              <div className={`w-1.5 h-1.5 rounded-none ${job.status === 'COMPLETED' ? 'bg-acid' :
+                                  job.status === 'RUNNING' ? 'bg-amber-500 animate-pulse' :
+                                    'bg-red-500'
+                                }`} />
+                              <span className={`text-xs font-mono ${job.status === 'COMPLETED' ? 'text-white' :
+                                  job.status === 'RUNNING' ? 'text-amber-500' :
+                                    'text-red-500'
+                                }`}>{job.status}</span>
+                            </div>
+                          </td>
+                          <td className="pr-6 font-mono text-sm text-[#888]">{job.count}</td>
+                        </tr>
+                      ))
+                    )}
+                  </AnimatePresence>
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
   );

@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Cinzel, Manrope } from "next/font/google";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
 
-const inter = Inter({
+const cinzel = Cinzel({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-cinzel",
+  display: "swap",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "LeadGen Pro - Universal Scraping Engine",
-  description: "AI-Powered Lead Generation & Data Extraction Platform",
+  title: "NEXUS | Lead Generation Engine",
+  description: "Advanced Data Extraction & Intelligence System",
 };
 
 export default function RootLayout({
@@ -20,10 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning className={`${inter.variable} font-sans antialiased bg-slate-950 text-white`}>
-        <div className="flex">
+      <body suppressHydrationWarning className={`${cinzel.variable} ${manrope.variable} font-body bg-void text-primary antialiased`}>
+        <div className="flex bg-void min-h-screen">
           <Sidebar />
-          <main className="ml-64 flex-1 min-h-screen">
+          <main className="ml-64 flex-1 relative z-10">
             {children}
           </main>
         </div>

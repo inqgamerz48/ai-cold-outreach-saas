@@ -5,157 +5,124 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
     LayoutDashboard, Search, Database, Settings, Linkedin, Hash,
-    MapPin, Users, Zap, Mail, BarChart3, ChevronRight
+    MapPin, Users, Zap, Mail, BarChart3, ChevronRight, Terminal, Cpu
 } from 'lucide-react';
 
 export default function Sidebar() {
     const pathname = usePathname();
 
     const navItems = [
-        { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-        { href: '/scraper', label: 'Multi-Scraper', icon: Search },
-        { href: '/leads', label: 'Leads Database', icon: Database },
-        { href: '/personas', label: 'Personas', icon: Users },
-        { href: '/jobs', label: 'Job History', icon: BarChart3 },
-        { href: '/campaigns', label: 'Campaigns', icon: Mail },
-        { href: '/templates', label: 'Templates', icon: Mail },
-        { href: '/email-accounts', label: 'Email Accounts', icon: Mail },
-        { href: '/ab-testing', label: 'A/B Testing', icon: BarChart3 },
-        { href: '/analytics', label: 'Analytics', icon: BarChart3 },
-        { href: '/settings', label: 'Settings', icon: Settings },
+        { href: '/', label: 'DASHBOARD', icon: LayoutDashboard },
+        { href: '/scraper', label: 'MULTI_SCRAPER', icon: Search },
+        { href: '/leads', label: 'LEAD_DATABASE', icon: Database },
+        { href: '/personas', label: 'PERSONAS', icon: Users },
+        { href: '/jobs', label: 'JOB_HISTORY', icon: BarChart3 },
+        { href: '/campaigns', label: 'CAMPAIGNS', icon: Mail },
+        { href: '/templates', label: 'TEMPLATES', icon: Mail },
+        { href: '/email-accounts', label: 'EMAIL_ACCOUNTS', icon: Mail },
+        { href: '/ab-testing', label: 'A/B_TESTING', icon: BarChart3 },
+        { href: '/analytics', label: 'ANALYTICS', icon: BarChart3 },
+        { href: '/settings', label: 'SETTINGS', icon: Settings },
     ];
 
     const scraperLinks = [
-        { href: '/scraper/google-maps', label: 'Google Maps', icon: MapPin, color: 'text-blue-400' },
-        { href: '/scraper/linkedin', label: 'LinkedIn', icon: Linkedin, color: 'text-indigo-400' },
-        { href: '/scraper/reddit', label: 'Reddit', icon: Hash, color: 'text-orange-400' },
+        { href: '/scraper/google-maps', label: 'MAPS_EXTRACTOR', icon: MapPin },
+        { href: '/scraper/linkedin', label: 'LINKEDIN_MINER', icon: Linkedin },
+        { href: '/scraper/reddit', label: 'REDDIT_OSINT', icon: Hash },
     ];
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.05
-            }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, x: -20 },
-        show: { opacity: 1, x: 0 }
-    };
-
     return (
-        <aside className="fixed left-0 top-0 h-full w-64 glass border-r border-slate-800/50 flex flex-col z-50">
+        <aside className="fixed left-0 top-0 h-full w-64 bg-panel border-r border-[#222] flex flex-col z-50">
             {/* Logo */}
-            <div className="p-6 border-b border-slate-800/50">
+            <div className="p-8 border-b border-[#222]">
                 <Link href="/" className="flex items-center gap-3 group">
-                    <motion.div
-                        className="w-11 h-11 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg glow"
-                        whileHover={{ scale: 1.05, rotate: 5 }}
-                        transition={{ type: 'spring', stiffness: 300 }}
-                    >
-                        <Zap className="text-white" size={22} />
-                    </motion.div>
+                    <div className="w-10 h-10 bg-acid flex items-center justify-center group-hover:bg-white transition-colors duration-300">
+                        <Zap className="text-black" size={20} fill="currentColor" />
+                    </div>
                     <div>
-                        <h1 className="text-lg font-bold gradient-text group-hover:text-indigo-300 transition-colors">LeadGen Pro</h1>
-                        <p className="text-xs text-slate-500">v3.0 - Universal Engine</p>
+                        <h1 className="text-xl font-heading text-white tracking-wider group-hover:text-acid transition-colors">NEXUS</h1>
+                        <p className="text-[10px] text-[#555] font-mono uppercase tracking-[0.2em]">INTELLIGENCE</p>
                     </div>
                 </Link>
             </div>
 
             {/* Main Nav */}
-            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                <p className="text-xs text-slate-600 uppercase tracking-wider mb-3 px-3 font-medium">Main Menu</p>
-                <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="show"
-                    className="space-y-1"
-                >
-                    {navItems.map((item) => {
-                        const isActive = pathname === item.href;
-                        return (
-                            <motion.div key={item.href} variants={itemVariants}>
+            <nav className="flex-1 py-6 space-y-8 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-800">
+                <div>
+                    <p className="px-6 text-[10px] text-[#444] uppercase tracking-widest mb-2 font-mono">Core Modules</p>
+                    <div className="flex flex-col">
+                        {navItems.map((item) => {
+                            const isActive = pathname === item.href;
+                            return (
                                 <Link
+                                    key={item.href}
                                     href={item.href}
-                                    className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${isActive
-                                        ? 'bg-gradient-to-r from-indigo-600/20 to-purple-600/10 text-indigo-400 border border-indigo-500/30 shadow-lg shadow-indigo-500/10'
-                                        : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                                    className={`relative pl-6 pr-4 py-3 flex items-center gap-3 text-xs font-mono transition-all duration-200 group border-l-2 ${isActive
+                                            ? 'text-acid bg-[#111] border-acid'
+                                            : 'text-[#888] hover:text-white hover:bg-[#0f0f0f] border-transparent hover:border-[#333]'
                                         }`}
                                 >
-                                    <div className="flex items-center gap-3">
-                                        <item.icon
-                                            size={18}
-                                            className={isActive ? 'text-indigo-400' : 'text-slate-500 group-hover:text-indigo-400 transition-colors'}
-                                        />
-                                        <span>{item.label}</span>
-                                    </div>
+                                    <item.icon
+                                        size={16}
+                                        className={isActive ? 'text-acid' : 'text-[#555] group-hover:text-white transition-colors'}
+                                    />
+                                    <span className="tracking-wider">{item.label}</span>
                                     {isActive && (
-                                        <ChevronRight size={14} className="text-indigo-400" />
+                                        <motion.div
+                                            layoutId="activeIndicator"
+                                            className="absolute right-4 w-1.5 h-1.5 bg-acid rounded-full"
+                                        />
                                     )}
                                 </Link>
-                            </motion.div>
-                        );
-                    })}
-                </motion.div>
+                            );
+                        })}
+                    </div>
+                </div>
 
-                <div className="pt-4">
-                    <p className="text-xs text-slate-600 uppercase tracking-wider mb-3 px-3 font-medium">Quick Scrapers</p>
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="show"
-                        className="space-y-1"
-                    >
+                <div>
+                    <p className="px-6 text-[10px] text-[#444] uppercase tracking-widest mb-2 font-mono">Extraction Units</p>
+                    <div className="flex flex-col">
                         {scraperLinks.map((item) => {
                             const isActive = pathname === item.href;
                             return (
-                                <motion.div key={item.href} variants={itemVariants}>
-                                    <Link
-                                        href={item.href}
-                                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${isActive
-                                            ? 'bg-gradient-to-r from-emerald-600/20 to-cyan-600/10 text-emerald-400 border border-emerald-500/30'
-                                            : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                                            }`}
-                                    >
-                                        <item.icon
-                                            size={18}
-                                            className={isActive ? 'text-emerald-400' : `${item.color} opacity-60 group-hover:opacity-100 transition-opacity`}
-                                        />
-                                        {item.label}
-                                    </Link>
-                                </motion.div>
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={`relative pl-6 pr-4 py-3 flex items-center gap-3 text-xs font-mono transition-all duration-200 group border-l-2 ${isActive
+                                            ? 'text-acid bg-[#111] border-acid'
+                                            : 'text-[#888] hover:text-white hover:bg-[#0f0f0f] border-transparent hover:border-[#333]'
+                                        }`}
+                                >
+                                    <item.icon
+                                        size={16}
+                                        className={isActive ? 'text-acid' : 'text-[#555] group-hover:text-white transition-colors'}
+                                    />
+                                    <span className="tracking-wider">{item.label}</span>
+                                </Link>
                             );
                         })}
-                    </motion.div>
+                    </div>
                 </div>
             </nav>
 
             {/* Footer */}
-            <div className="p-4 border-t border-slate-800/50">
-                <motion.div
-                    className="glass rounded-xl p-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                >
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">System Status</p>
-                    <div className="flex items-center gap-2">
-                        <span className="relative flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                        </span>
-                        <span className="text-sm text-emerald-400 font-medium">All Systems Operational</span>
+            <div className="p-6 border-t border-[#222] bg-[#080808]">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="relative">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                        <div className="absolute inset-0 bg-emerald-500 rounded-full opacity-20 animate-ping" />
                     </div>
-                </motion.div>
+                    <div className="text-[10px] font-mono text-emerald-500 uppercase tracking-wider">
+                        System Online
+                    </div>
+                </div>
 
-                {/* Version Info */}
-                <div className="mt-3 px-2 text-center">
-                    <p className="text-[10px] text-slate-600">
-                        © 2024 LeadGen Pro
-                    </p>
+                <div className="flex items-center justify-between text-[#333]">
+                    <Cpu size={14} />
+                    <span className="text-[10px] font-mono">CPU: 12%</span>
+                    <div className="w-16 h-1 bg-[#222] overflow-hidden">
+                        <div className="h-full bg-[#333] w-[12%]"></div>
+                    </div>
                 </div>
             </div>
         </aside>
