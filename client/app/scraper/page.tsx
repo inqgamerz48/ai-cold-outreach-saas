@@ -27,17 +27,17 @@ export default function ScraperPage() {
             let body = {};
 
             if (activeTab === 'maps') {
-                endpoint = 'http://localhost:3001/api/search/maps';
+                endpoint = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/search/maps`;
                 body = { term: mapsTerm };
             } else if (activeTab === 'reddit') {
-                endpoint = 'http://localhost:3001/api/search/reddit';
+                endpoint = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/search/reddit`;
                 body = {
                     keywords: redditKeywords.split(',').map(s => s.trim()),
                     subreddits: redditSubs.split(',').map(s => s.trim()),
                     limit: 10
                 };
             } else if (activeTab === 'linkedin') {
-                endpoint = 'http://localhost:3001/api/search/linkedin';
+                endpoint = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/search/linkedin`;
                 body = { keywords: linkedinKeywords, location: linkedinLocation };
             }
 
@@ -66,7 +66,7 @@ export default function ScraperPage() {
     const pollJob = async (id: number) => {
         const interval = setInterval(async () => {
             try {
-                const res = await fetch(`http://localhost:3001/api/search/job/${id}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/search/job/${id}`);
                 const data = await res.json();
                 if (data.status === 'success') {
                     if (data.job.status === 'COMPLETED' || data.job.status === 'FAILED') {

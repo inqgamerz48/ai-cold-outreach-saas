@@ -18,7 +18,7 @@ export default function LinkedInScraperPage() {
         setStatus('Queueing...');
 
         try {
-            const res = await fetch('http://localhost:3001/api/search/linkedin', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/search/linkedin`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ keywords, location })
@@ -42,7 +42,7 @@ export default function LinkedInScraperPage() {
     const pollJob = async (id: number) => {
         const interval = setInterval(async () => {
             try {
-                const res = await fetch(`http://localhost:3001/api/search/job/${id}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/search/job/${id}`);
                 const data = await res.json();
                 if (data.status === 'success') {
                     if (data.job.status === 'COMPLETED' || data.job.status === 'FAILED') {

@@ -39,7 +39,7 @@ export default function DashboardPage() {
   const fetchData = useCallback(async () => {
     try {
       // Check backend health
-      const healthRes = await fetch('http://localhost:3001/health', {
+      const healthRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/health`, {
         method: 'GET',
         signal: AbortSignal.timeout(5000)
       });
@@ -48,7 +48,7 @@ export default function DashboardPage() {
         setBackendStatus('online');
 
         try {
-          const jobsRes = await fetch('http://localhost:3001/api/jobs');
+          const jobsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/jobs`);
           if (jobsRes.ok) {
             const jobsData = await jobsRes.json();
             if (jobsData.jobs) {
@@ -77,7 +77,7 @@ export default function DashboardPage() {
         }
 
         try {
-          const leadsRes = await fetch('http://localhost:3001/api/leads');
+          const leadsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/leads`);
           if (leadsRes.ok) {
             const leadsData = await leadsRes.json();
             setStats(prev => ({
@@ -90,7 +90,7 @@ export default function DashboardPage() {
         }
 
         try {
-          const personasRes = await fetch('http://localhost:3001/api/personas');
+          const personasRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/personas`);
           if (personasRes.ok) {
             const personasData = await personasRes.json();
             setStats(prev => ({
@@ -345,12 +345,12 @@ export default function DashboardPage() {
                           <td>
                             <div className="flex items-center gap-2">
                               <div className={`w-1.5 h-1.5 rounded-none ${job.status === 'COMPLETED' ? 'bg-acid' :
-                                  job.status === 'RUNNING' ? 'bg-amber-500 animate-pulse' :
-                                    'bg-red-500'
+                                job.status === 'RUNNING' ? 'bg-amber-500 animate-pulse' :
+                                  'bg-red-500'
                                 }`} />
                               <span className={`text-xs font-mono ${job.status === 'COMPLETED' ? 'text-white' :
-                                  job.status === 'RUNNING' ? 'text-amber-500' :
-                                    'text-red-500'
+                                job.status === 'RUNNING' ? 'text-amber-500' :
+                                  'text-red-500'
                                 }`}>{job.status}</span>
                             </div>
                           </td>

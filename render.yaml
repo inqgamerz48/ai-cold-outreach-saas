@@ -1,0 +1,49 @@
+services:
+  # BACKEND SERVICE (Node.js)
+  - type: web
+    name: nexus-core
+    env: node
+    rootDir: server
+    # Build: Install deps, Generate Prisma Client, Compass TS
+    buildCommand: npm install && npm run build
+    # Start: Deploy migrations (safely) then start server
+    startCommand: npx prisma migrate deploy && npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: APIFY_API_TOKEN
+        sync: false
+      - key: HUNTER_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+
+  # AI ENGINE SERVICE (Python)
+  - type: web
+    name: nexus-brain
+    env: python
+    rootDir: ai-engine
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: OPENROUTER_API_KEY
+        sync: false
+
+  # FRONTEND (Next.js) - Optional, can be deployed on Vercel
+  # If deploying on Render, uncomment below:
+  # - type: web
+  #   name: nexus-ui
+  #   env: node
+  #   rootDir: client
+  #   buildCommand: npm install && npm run build
+  #   startCommand: npm start
+  #   envVars:
+  #     - key: NEXT_PUBLIC_API_URL
+  #       fromService:
+  #         type: web
+  #         name: nexus-core
+  #         property: url
